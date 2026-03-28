@@ -4,6 +4,7 @@
 const mongoose = require('mongoose');
 const Company = require('../models/Company');
 const Commitment = require('../models/Commitment');
+const dbReady = require('../middleware/dbReady');
 
 function invalidId(res) {
   return res.status(400).json({ error: 'Invalid companyId' });
@@ -12,6 +13,7 @@ function invalidId(res) {
 /** POST /api/commitments — create a commitment */
 exports.createCommitment = async (req, res) => {
   try {
+    if (!dbReady(res)) return;
     const { companyId, title, description, category, targetDate, status } = req.body;
 
     if (!companyId || !mongoose.Types.ObjectId.isValid(companyId)) {
@@ -45,6 +47,7 @@ exports.createCommitment = async (req, res) => {
 /** GET /api/commitments — list commitments (optional ?companyId=) */
 exports.listCommitments = async (req, res) => {
   try {
+    if (!dbReady(res)) return;
     const { companyId } = req.query;
     const filter = {};
 

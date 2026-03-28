@@ -7,6 +7,7 @@ const Company = require('../models/Company');
 const Commitment = require('../models/Commitment');
 const NewsEvent = require('../models/NewsEvent');
 const { classifyNews } = require('../services/classifyNews');
+const dbReady = require('../middleware/dbReady');
 
 function invalidCompanyId(res) {
   return res.status(400).json({ error: 'Invalid companyId' });
@@ -83,6 +84,7 @@ async function resolveCommitmentText(companyId, commitmentId) {
 /** POST /api/news — add a news item (AI classification stored on the document) */
 exports.createNews = async (req, res) => {
   try {
+    if (!dbReady(res)) return;
     const { companyId, title, content, date, commitmentId } = req.body;
 
     if (!companyId || !mongoose.Types.ObjectId.isValid(companyId)) {
@@ -151,6 +153,7 @@ exports.createNews = async (req, res) => {
 /** GET /api/news — list news (optional ?companyId=) */
 exports.listNews = async (req, res) => {
   try {
+    if (!dbReady(res)) return;
     const { companyId } = req.query;
     const filter = {};
 

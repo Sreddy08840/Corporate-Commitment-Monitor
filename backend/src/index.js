@@ -6,6 +6,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const { mongoStatus } = require('./config/db');
 
 const app = express();
 
@@ -58,11 +59,12 @@ app.use('/api/news', require('./routes/newsRoutes'));
 
 // Simple health check — use this to confirm the server and DB are up
 app.get('/api/health', (req, res) => {
+  const m = mongoStatus();
   res.json({
     ok: true,
     service: 'Corporate Commitment Monitor API',
-    mongo:
-      require('mongoose').connection.readyState === 1 ? 'connected' : 'disconnected',
+    mongo: m.connected ? 'connected' : m.label,
+    mongoState: m.state,
   });
 });
 
