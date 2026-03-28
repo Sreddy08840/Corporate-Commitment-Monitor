@@ -6,9 +6,18 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const uri = process.env.MONGODB_URI;
+    // Render / Atlas: set MONGODB_URI in the dashboard. DATABASE_URL is a common alias on some hosts.
+    const uri = (process.env.MONGODB_URI || process.env.DATABASE_URL || '').trim();
     if (!uri) {
-      console.error('Error: MONGODB_URI is not set in environment variables.');
+      console.error(
+        'MongoDB connection string missing. Add an environment variable in your host (e.g. Render →'
+      );
+      console.error(
+        '  Dashboard → your Web Service → Environment → Environment Variables) with either:'
+      );
+      console.error('  • MONGODB_URI = your Atlas connection string (mongodb+srv://...), or');
+      console.error('  • DATABASE_URL = same string');
+      console.error('Then save and redeploy.');
       process.exit(1);
     }
 

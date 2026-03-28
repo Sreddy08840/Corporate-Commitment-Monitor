@@ -267,9 +267,14 @@ You need **two** public URLs in production: the **API** (Express) and the **fron
    | `OPENAI_API_KEY` | Optional fallback |
    | `PORT` | Leave unset — Render injects `PORT` |
 
-5. Deploy. Copy the service URL, e.g. `https://corporate-commitment-monitor-api.onrender.com`.
-6. Test: `https://YOUR-API.onrender.com/api/health` → `"mongo": "connected"`.
-7. Optional: in Render **Shell**, run `node scripts/seedIndianFoodPdf.js` from `backend` to seed demo data (requires `MONGODB_URI` in that environment).
+5. **Before the first deploy works:** open your service → **Environment** → **Add environment variable**:
+   - **Key:** `MONGODB_URI`
+   - **Value:** your full Atlas connection string (`mongodb+srv://user:pass@cluster.../dbname?...`)
+   - Use the same string you have in local `backend/.env`. No quotes needed in Render.
+   - Save, then **Manual Deploy → Deploy latest commit** (or push again). If the service started without this key, it will exit with `MONGODB_URI is not set` until you add it.
+6. Deploy. Copy the service URL, e.g. `https://corporate-commitment-monitor-api.onrender.com`.
+7. Test: `https://YOUR-API.onrender.com/api/health` → `"mongo": "connected"`.
+8. Optional: in Render **Shell**, run `node scripts/seedIndianFoodPdf.js` from `backend` to seed demo data (requires `MONGODB_URI` in that environment).
 
 You can also use the repo **`render.yaml`** as a [Blueprint](https://render.com/docs/blueprint-spec) and then add secrets in the dashboard.
 
