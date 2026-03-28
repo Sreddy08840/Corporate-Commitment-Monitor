@@ -1,0 +1,10 @@
+# Netlify: connect repo, base directory = frontend, or deploy from frontend folder with this file.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# React Router — send all routes to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

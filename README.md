@@ -245,23 +245,72 @@ POST /api/news
 
 ---
 
-## 🚀 Deployment
+## 🚀 Deployment (cloud)
 
-### Backend
+You need **two** public URLs in production: the **API** (Express) and the **frontend** (static Vite build). **MongoDB Atlas** must allow connections from the internet (`Network Access` → `0.0.0.0/0` for a demo, or your host’s egress IPs).
 
-```
-cd backend
-npm install
-npm start
+### 1. Deploy the API (example: [Render](https://render.com))
+
+1. Push this repo to GitHub/GitLab.
+2. New **Web Service** → connect the repo.
+3. Settings:
+   - **Root directory:** `backend`
+   - **Build command:** `npm install`
+   - **Start command:** `npm start`
+   - **Instance type:** Free (cold starts are normal).
+4. **Environment variables** (service → Environment):
+
+   | Key | Value |
+   |-----|--------|
+   | `MONGODB_URI` | Your Atlas connection string |
+   | `HUGGINGFACE_API_TOKEN` | Optional; HF inference for classification |
+   | `OPENAI_API_KEY` | Optional fallback |
+   | `PORT` | Leave unset — Render injects `PORT` |
+
+5. Deploy. Copy the service URL, e.g. `https://corporate-commitment-monitor-api.onrender.com`.
+6. Test: `https://YOUR-API.onrender.com/api/health` → `"mongo": "connected"`.
+7. Optional: in Render **Shell**, run `node scripts/seedIndianFoodPdf.js` from `backend` to seed demo data (requires `MONGODB_URI` in that environment).
+
+You can also use the repo **`render.yaml`** as a [Blueprint](https://render.com/docs/blueprint-spec) and then add secrets in the dashboard.
+
+### 2. Deploy the frontend (example: [Netlify](https://netlify.com) or [Vercel](https://vercel.com))
+
+1. New site from repo (or drag-and-drop `frontend/dist` after a local build).
+2. **Base directory:** `frontend`
+3. **Build command:** `npm run build`
+4. **Publish directory:** `frontend/dist` (or `dist` if base is `frontend`).
+5. **Environment variable:**
+
+   ```env
+   VITE_API_URL=https://YOUR-API.onrender.com
+   ```
+
+   No trailing slash. Rebuild after changing it.
+
+6. **SPA routing:** this repo includes `frontend/netlify.toml` (Netlify) and `frontend/vercel.json` (Vercel) so React Router paths refresh correctly.
+
+7. Open your Netlify/Vercel URL and use the app. If the UI cannot reach the API, check browser **DevTools → Network** (CORS): the API uses open `cors()` so cross-origin requests from your frontend origin are allowed.
+
+### 3. Local production smoke test
+
+```bash
+cd backend && npm install && npm start
+cd ../frontend && npm install && npm run build && npx vite preview
 ```
 
-### Frontend
+Set `frontend/.env.production` with `VITE_API_URL=http://localhost:5000` for a local API check (Vite loads `.env.production` for `vite build`).
 
-```
-cd frontend
-npm install
-npm run dev
-```
+### 4. GitHub Pages (automated frontend)
+
+After the API is live, you can ship the UI from GitHub Actions:
+
+1. Repo **Settings → Pages → Build and deployment → Source:** **GitHub Actions**.
+2. Repo **Settings → Secrets and variables → Actions → New repository secret:**  
+   `VITE_API_URL` = your public API URL (same as Netlify, no trailing slash).
+3. Push to `main` (or run the workflow manually). The site will be at  
+   `https://<user>.github.io/<repo>/` — the workflow sets `VITE_BASE_PATH` for that path.
+
+**Backend in production:** use Render/Railway, or build the **`backend/Dockerfile`** on any container host. Set `MONGODB_URI` and optional HF/OpenAI keys.
 
 ---
 

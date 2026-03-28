@@ -1,0 +1,16 @@
+# Render Blueprint — deploy the API as a Web Service.
+# https://render.com/docs/blueprint-spec
+# After connect: set env vars in the dashboard (MONGODB_URI, HUGGINGFACE_API_TOKEN, etc.)
+
+services:
+  - type: web
+    name: corporate-commitment-monitor-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
