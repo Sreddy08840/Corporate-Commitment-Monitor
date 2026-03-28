@@ -1,24 +1,30 @@
 /**
  * Corporate Commitment Monitor — Express API entry point.
- * Connects to MongoDB and exposes a small health route for verification.
+ * Connects to MongoDB, then listens (avoids handling API traffic before DB is ready).
  */
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
-// Connect to MongoDB before handling requests
-connectDB();
-
 const app = express();
 
-// Allow the React dev server (or other origins) to call this API
-app.use(cors());
-// Parse JSON request bodies
+// GitHub Pages + local dev: reflect the browser Origin so preflight + JSON POST work cross-origin
+const corsOptions = {
+  origin: true,
+  credentials: false,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 app.use(express.json());
 
 // Browser-friendly root — API has no React UI on this port
 app.get('/', (req, res) => {
+  const portHint = process.env.PORT || 5000;
   res.type('html').send(`<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,8 +40,8 @@ app.get('/', (req, res) => {
 </head>
 <body>
   <h1>Corporate Commitment Monitor</h1>
-  <p>This address is the <strong>API server</strong> (Express on port <code>${process.env.PORT || 5000}</code>), not the web dashboard.</p>
-  <p><strong>Web UI:</strong> run <code>npm run dev</code> in the <code>frontend</code> folder, then open <a href="http://localhost:5173">http://localhost:5173</a> (Vite default port).</p>
+  <p>This address is the <strong>API server</strong> (Express on port <code>${portHint}</code>), not the web dashboard.</p>
+  <p><strong>Web UI:</strong> use your GitHub Pages or local <code>npm run dev</code> in <code>frontend</code>.</p>
   <p><strong>Quick checks:</strong></p>
   <ul>
     <li><a href="/api/health">GET /api/health</a> — server + MongoDB status (JSON)</li>
@@ -60,10 +66,28 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+// Ensure error responses still include CORS headers (browser otherwise reports "CORS" on 500s)
+app.use((err, req, res, next) => {
+  console.error(err);
+  const origin = req.headers.origin;
+  if (origin) res.setHeader('Access-Control-Allow-Origin', origin);
+  res.status(500).json({ error: err.message || 'Internal server error' });
+});
+
 const PORT = Number(process.env.PORT) || 5000;
-// Bind to all interfaces so cloud platforms (Render, Railway, etc.) can route traffic
 const HOST = process.env.HOST || '0.0.0.0';
 
-app.listen(PORT, HOST, () => {
-  console.log(`Server listening on http://${HOST}:${PORT}`);
-});
+connectDB()
+  .then(() => {
+    app.listen(PORT, HOST, () => {
+      console.log(`Server listening on http://${HOST}:${PORT}`);
+    });
+  })
+  .catch((e) => {
+    console.error('Startup failed:', e.message);
+    process.exit(1);
+  });
