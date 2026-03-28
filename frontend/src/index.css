@@ -1,0 +1,170 @@
+:root {
+  --bg: #f3f5f9;
+  --surface: #ffffff;
+  --surface-2: #eef1f6;
+  --text: #0f172a;
+  --text-soft: #334155;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --accent: #0d9488;
+  --accent-soft: rgba(13, 148, 136, 0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --success: #15803d;
+  --success-soft: #ecfdf3;
+  --success-border: #bbf7d0;
+  --danger: #b91c1c;
+  --danger-soft: #fef2f2;
+  --danger-border: #fecaca;
+  /* classification */
+  --c-progress: #047857;
+  --c-progress-bg: #d1fae5;
+  --c-delay: #b45309;
+  --c-delay-bg: #ffedd5;
+  --c-reversal: #b91c1c;
+  --c-reversal-bg: #fee2e2;
+  --c-unrelated: #475569;
+  --c-unrelated-bg: #e2e8f0;
+  font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--bg);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Shared layout */
+.page__header {
+  margin-bottom: 1.75rem;
+  text-align: left;
+}
+
+.page__title {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.5rem, 4vw, 1.85rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.page__subtitle {
+  margin: 0;
+  max-width: 42rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.page__muted {
+  color: var(--muted);
+  font-size: 0.925rem;
+}
+
+.page__error {
+  padding: 0.75rem 1rem;
+  background: var(--danger-soft);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+/* Cards & buttons */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.35rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 1.1rem;
+  font-weight: 600;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Badges (AI labels) */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge--neutral {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.badge--progress {
+  background: var(--c-progress-bg);
+  color: var(--c-progress);
+}
+
+.badge--delay {
+  background: var(--c-reversal-bg);
+  color: var(--c-reversal);
+}
+
+.badge--reversal {
+  background: var(--c-reversal-bg);
+  color: var(--c-reversal);
+}
+
+.badge--unrelated {
+  background: var(--c-unrelated-bg);
+  color: var(--c-unrelated);
+}
+
+@media (max-width: 640px) {
+  .app__main {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

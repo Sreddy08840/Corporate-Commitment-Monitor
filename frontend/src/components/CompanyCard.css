@@ -1,0 +1,63 @@
+.company-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.company-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.company-card__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.company-card__meta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.company-card__label {
+  font-weight: 600;
+  color: var(--text-soft);
+  margin-right: 0.35rem;
+}
+
+.company-card__link {
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.company-card__desc {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--text-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.company-card__desc--muted {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.company-card__footer {
+  margin: auto 0 0;
+  padding-top: 0.75rem;
+}
