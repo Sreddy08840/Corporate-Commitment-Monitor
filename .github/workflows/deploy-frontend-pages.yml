@@ -1,11 +1,12 @@
-# Builds the Vite app and publishes to GitHub Pages.
+# Builds the Vite app and pushes static files to branch `gh-pages`.
 #
-# Enable: Repo Settings → Pages → Source: "GitHub Actions"
-# Secrets (Settings → Secrets → Actions):
-#   VITE_API_URL  = your public API URL, e.g. https://your-api.onrender.com (no trailing slash)
+# GitHub Pages setup (one time):
+#   Repo → Settings → Pages → Build and deployment → Source: "Deploy from a branch"
+#   Branch: gh-pages  /  folder: / (root)
 #
-# Optional variable for GitHub Pages project URL:
-#   If your site is https://USER.github.io/REPO/, the workflow sets VITE_BASE_PATH automatically.
+# Secret: Settings → Secrets → Actions → VITE_API_URL = https://your-api.onrender.com (no trailing slash)
+#
+# Site URL: https://<user>.github.io/<repo>/  — VITE_BASE_PATH matches the repo name.
 
 name: Deploy frontend to GitHub Pages
 
@@ -15,16 +16,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: gh-pages-deploy
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,26 +37,15 @@ jobs:
       - name: Install and build
         working-directory: frontend
         env:
-          # Point the built SPA at your deployed Express API
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          # Subpath when using https://<user>.github.io/<repo>/
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
         run: |
           npm ci
           npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Push to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: frontend/dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: frontend/dist
+          force_orphan: true

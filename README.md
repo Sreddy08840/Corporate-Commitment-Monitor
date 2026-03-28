@@ -307,13 +307,15 @@ Set `frontend/.env.production` with `VITE_API_URL=http://localhost:5000` for a l
 
 ### 4. GitHub Pages (automated frontend)
 
-After the API is live, you can ship the UI from GitHub Actions:
+After the API is live, the workflow **builds** the Vite app and **pushes** the `frontend/dist` output to a **`gh-pages`** branch (no “GitHub Actions” Pages source required).
 
-1. Repo **Settings → Pages → Build and deployment → Source:** **GitHub Actions**.
-2. Repo **Settings → Secrets and variables → Actions → New repository secret:**  
-   `VITE_API_URL` = your public API URL (same as Netlify, no trailing slash).
-3. Push to `main` (or run the workflow manually). The site will be at  
-   `https://<user>.github.io/<repo>/` — the workflow sets `VITE_BASE_PATH` for that path.
+1. Repo **Settings → Secrets and variables → Actions** → secret **`VITE_API_URL`** = your API URL (no trailing slash), e.g. `https://corporate-commitment-monitor.onrender.com`.
+2. Repo **Settings → Pages → Build and deployment → Source:** **Deploy from a branch**.
+3. **Branch:** **`gh-pages`**, **folder:** **`/`** (root). Save.
+4. Push to **`main`** or **Actions → Deploy frontend to GitHub Pages → Run workflow**. The first run creates the `gh-pages` branch; refresh **Settings → Pages** if the branch is not listed until after one successful run.
+5. Open **`https://<user>.github.io/<repo>/`** (example: `https://sreddy08840.github.io/Corporate-Commitment-Monitor/`).
+
+If you previously chose **Source: GitHub Actions** and saw deploy **404** errors, switch Pages to **Deploy from branch → gh-pages** as above and use this workflow.
 
 **Backend in production:** use Render/Railway, or build the **`backend/Dockerfile`** on any container host. Set `MONGODB_URI` and optional HF/OpenAI keys.
 
