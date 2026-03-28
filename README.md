@@ -324,7 +324,7 @@ If you previously chose **Source: GitHub Actions** and saw deploy **404** errors
 ## 👨‍💻 Author
 
 * Santosh
-* B.Tech CSE Student
+* B.E Final Year CSE Student
 * Passionate about Full Stack Development & AI Projects
 
 ---
