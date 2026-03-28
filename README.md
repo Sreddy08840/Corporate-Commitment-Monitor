@@ -268,8 +268,8 @@ npm run dev
 ## 👨‍💻 Author
 
 **Santosh**
-**B.Tech CSE Student**
-**Passionate about Full Stack Development & AI Projects**
+*B.Tech CSE Student
+*Passionate about Full Stack Development & AI Projects
 
 ---
 
