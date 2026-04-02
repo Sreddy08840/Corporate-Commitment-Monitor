@@ -49,7 +49,7 @@ This project solves that by:
 
 ### AI Integration
 
-* OpenAI API (for classification)
+* Hoggingface ai(for classification)
 
 ---
 
